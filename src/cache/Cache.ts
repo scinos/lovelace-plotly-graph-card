@@ -129,7 +129,11 @@ export default class Cache {
     this.histories[entityKey] = h;
     this.ranges[entityKey] ??= [];
     this.ranges[entityKey].push(range);
-    this.ranges[entityKey] = compactRanges(this.ranges[entityKey]);
+    // if(isEntityIdStatisticsConfig(entity)) {
+    //   this.ranges[entityKey] = compactRanges(subtractRanges([[Date.now() - (5 *60*1000),Date.now()]],this.ranges[entityKey]));
+    // }else {
+      this.ranges[entityKey] = compactRanges(this.ranges[entityKey]);
+    // }
   }
 
   clearCache() {
@@ -177,7 +181,8 @@ export default class Cache {
         if (entity.entity) {
           const entityKey = getEntityKey(entity);
           this.ranges[entityKey] ??= [];
-          const rangesToFetch = subtractRanges([range], this.ranges[entityKey]);
+          // const rangesToFetch = subtractRanges([range], this.ranges[entityKey]);
+          const rangesToFetch = [range];
           for (const aRange of rangesToFetch) {
             const fetchedHistory = await fetchSingleRange(hass, entity, aRange);
             this.add(entity, fetchedHistory.history, fetchedHistory.range);
